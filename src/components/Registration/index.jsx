@@ -7,31 +7,27 @@ const Registration = () => {
     password: '',
     passwordConfirm: '',
   });
-  const [emailInput, setEmailInput] = useState(false);
 
   const handleChangeEmail = (e) => {
     let emailValue = e.target.value;
-    setUser({ ...user, email: emailValue });
-    if (validator.isEmail(user.email) && emailInput === false) {
-      setUser({
-        ...user,
-        email: emailValue,
-        username: emailValue.slice(0, user.email.indexOf('@')),
-      });
-    } else {
-      null;
-    }
+
+    setUser({
+      ...user,
+      email: emailValue,
+      username:
+        validator.isEmail(emailValue) && !user.username
+          ? emailValue.split('@')[0]
+          : user.username,
+    });
   };
 
   const handleChangeUsername = (e) => {
-    setEmailInput(true);
     setUser({ ...user, username: e.target.value });
   };
 
   const handleChangePassword = (e) => {
     setUser({ ...user, password: e.target.value });
-    console.log(user.password);
-    if (validator.isStrongPassword(user.password)) {
+    if (validator.isStrongPassword(e.target.value)) {
       console.log('Heslo je silné');
     } else {
       console.log('Heslo je slabé');
@@ -40,7 +36,7 @@ const Registration = () => {
 
   const handleConfirmPassword = (e) => {
     setUser({ ...user, passwordConfirm: e.target.value });
-    if (user.passwordConfirm === user.password) {
+    if (e.target.value === user.password) {
       console.log('Hesla se shodují');
     } else {
       console.log('Hesla se neshodují');
@@ -56,7 +52,7 @@ const Registration = () => {
     <div>
       <h1>Registration</h1>
 
-      <form className="registration_container">
+      <form onSubmit={handleInput} className="registration_container">
         <div className="circle"></div>
         <div className="inner_circle">
           <svg
@@ -101,11 +97,7 @@ const Registration = () => {
           id="confirm-password"
           placeholder="Confirm Password"
         />
-        <button
-          className="registration_button"
-          type="submit"
-          onClick={handleInput}
-        >
+        <button className="registration_button" type="submit">
           Register
         </button>
       </form>
